@@ -282,7 +282,6 @@ def main():
         elif c == 5:
             print(f"[{datetime.now().strftime(time_format)}] Спасибо за использование!")
             print(f"[{datetime.now().strftime(time_format)}] Завершаю процесс")
-            sock.close()
             exit()
 
 if __name__ == "__main__":
