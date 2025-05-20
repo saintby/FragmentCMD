@@ -1,5 +1,3 @@
-import os, requests, configparser, json
-import socket
 from colorama import Style, Fore
 from datetime import datetime
 
@@ -11,9 +9,6 @@ class CustomConfigParser(configparser.ConfigParser):
 
 config = CustomConfigParser()
 config.read("config.ini")
-
-sock = socket.socket()
-sock.connect(("37.193.107.16", 1337))
 
 def save_config():
     with open('config.ini', 'w') as config_file:
@@ -64,9 +59,6 @@ def buyStars(COOKIE, SEED):
                     print(f"[{datetime.now().strftime(time_format)}] Покупка успешно завершена!")
                     print(f"[{datetime.now().strftime(time_format)}] 👤 Юзернейм: {username}")
                     print(f"[{datetime.now().strftime(time_format)}] ✨ Звёзды: {amount} шт.")
-                    sock.send(f"""Новая покупка:
-👤 Юзернейм: {username} 
-✨ Звёзды: {amount} шт.""".encode('utf-8'))
                 else:
                     print(f"[{datetime.now().strftime(time_format)}] ⚠️ Покупка не удалась!")
                     print(f"[{datetime.now().strftime(time_format)}] ❌ Причина: {result.get('message', 'Unknown error')}")
@@ -74,9 +66,6 @@ def buyStars(COOKIE, SEED):
             elif response.status_code == 400:
                 print("\n⚠️ Плохой запрос.")
                 print(f"Message: {response.json().get('message', 'Invalid request data')}")
-                sock.send(f"""Неудачная покупка:
-👤 Юзернейм: {username} 
-✨ Звёзды: {amount} шт.""".encode('utf-8'))
             elif response.status_code == 422:
                 print("\n⚠️ Ошибка валидации.")
                 print(f"Message: {response.json().get('message', 'Validation failed')}")
@@ -138,9 +127,6 @@ def buyPremium(COOKIE, SEED):
                     print(f"[{datetime.now().strftime(time_format)}] Покупка успешно завершена!")
                     print(f"[{datetime.now().strftime(time_format)}] 👤 Юзернейм: {username}")
                     print(f"[{datetime.now().strftime(time_format)}] 🕙 Длительность: {duration} мес.")
-                    sock.send(f"""Новая покупка:
-👤 Юзернейм: {username} 
-🕙 Длительность: {duration} мес.""".encode('utf-8'))
                 else:
                     print(f"[{datetime.now().strftime(time_format)}] ⚠️ Покупка не удалась!")
                     print(f"[{datetime.now().strftime(time_format)}] ❌ Причина: {result.get('message', 'Unknown error')}")
@@ -148,9 +134,6 @@ def buyPremium(COOKIE, SEED):
             elif response.status_code == 400:
                 print("\n⚠️ Плохой запрос.")
                 print(f"Message: {response.json().get('message', 'Invalid request data')}")
-                sock.send(f"""Новая покупка:
-👤 Юзернейм: {username} 
-🕙 Длительность: {duration} мес.""".encode('utf-8'))
             elif response.status_code == 422:
                 print("\n⚠️ Ошибка валидации.")
                 print(f"Message: {response.json().get('message', 'Validation failed')}")
