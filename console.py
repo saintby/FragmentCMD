@@ -1,4 +1,5 @@
 import os, requests, configparser, json
+import socket
 from colorama import Style, Fore
 from datetime import datetime
 
@@ -22,10 +23,6 @@ def buyStars(COOKIE, SEED):
     print(f"[{datetime.now().strftime(time_format)}] Замечательно! Теперь впиши количество звёзд для покупки.")
     print(f"[{datetime.now().strftime(time_format)}] Пиши целое число без каких-либо символов от 50 до 1,000,000")
     amount: int = int(input(f"[{datetime.now().strftime(time_format)}] >>> "))
-    print(f"[{datetime.now().strftime(time_format)}] Подарить звёзды от ТВОЕГО имени или от имени Telegram?")
-    print(f"[{datetime.now().strftime(time_format)}] [1] От моего имени")
-    print(f"[{datetime.now().strftime(time_format)}] [2] От Telegram")
-    show_sender = int(input(f"[{datetime.now().strftime(time_format)}] >>> "))
     print(f"[{datetime.now().strftime(time_format)}] Теперь внимательно перепроверь данные ниже:")
     print(f"[{datetime.now().strftime(time_format)}] 👤 Юзернейм: {username}")
     print(f"[{datetime.now().strftime(time_format)}] ✨ Звёзды: {amount} шт.")
@@ -34,18 +31,12 @@ def buyStars(COOKIE, SEED):
     print(f"[{datetime.now().strftime(time_format)}] [2] Нет, исправить.")
     f: int = int(input(f"[{datetime.now().strftime(time_format)}] >>> "))
     if f == 1:
-        url = "https://fragmentapi.nightstranger.space/buyStars" if COOKIE != "" else "https://fragmentapi.nightstranger.space/buyStarsWithoutKYC"
+        url = "https://fragmentapi.nightstranger.space/buyStarsWithoutKYC"
         headers = {
             "Content-Type": "application/json"
         }
 
         data = {
-            "username": username,
-            "amount": amount,
-            "fragment_cookies": COOKIE,
-            "seed": SEED,
-            "show_sender": True if show_sender == 1 else False
-        } if url == "https://fragmentapi.nightstranger.space/buyStars" else {
             "username": username,
             "amount": amount,
             "seed": SEED
@@ -90,10 +81,6 @@ def buyPremium(COOKIE, SEED):
     print(f"[{datetime.now().strftime(time_format)}] Замечательно! Теперь впиши длительность подписки.")
     print(f"[{datetime.now().strftime(time_format)}] Пиши целое число без каких-либо символов: 3, 6, 12.")
     duration: int = int(input(f"[{datetime.now().strftime(time_format)}] >>> "))
-    print(f"[{datetime.now().strftime(time_format)}] Подарить премиум от ТВОЕГО имени или от имени Telegram?")
-    print(f"[{datetime.now().strftime(time_format)}] [1] От моего имени")
-    print(f"[{datetime.now().strftime(time_format)}] [2] От Telegram")
-    show_sender = int(input(f"[{datetime.now().strftime(time_format)}] >>> "))
     print(f"[{datetime.now().strftime(time_format)}] Теперь внимательно перепроверь данные ниже:")
     print(f"[{datetime.now().strftime(time_format)}] 👤 Юзернейм: {username}"  )
     print(f"[{datetime.now().strftime(time_format)}] 🕙 Длительность: {duration} мес.")
@@ -102,18 +89,12 @@ def buyPremium(COOKIE, SEED):
     print(f"[{datetime.now().strftime(time_format)}] [2] Нет, исправить.")
     f: int = int(input(f"[{datetime.now().strftime(time_format)}] >>> "))
     if f == 1:
-        url = "https://fragmentapi.nightstranger.space/buyPremium" if COOKIE != "" else "https://fragmentapi.nightstranger.space/buyPremiumWithoutKYC"
+        url = "https://fragmentapi.nightstranger.space/buyPremiumWithoutKYC"
         headers = {
             "Content-Type": "application/json"
         }
 
         data = {
-            "username": username,
-            "duration": duration,
-            "fragment_cookies": COOKIE,
-            "seed": SEED,
-            "show_sender": True if show_sender == 1 else False
-        } if url == "https://fragmentapi.nightstranger.space/buyPremium" else {
             "username": username,
             "duration": duration,
             "seed": SEED
@@ -197,7 +178,7 @@ def getCookie():
         config["Main"]["COOKIE"] = t
         with open('config.ini', 'w') as config_file:
             config.write(config_file)
-    print(f"[{datetime.now().strftime(time_format)}] Сохранено!")
+        print(f"[{datetime.now().strftime(time_format)}] Сохранено!")
     return config["Main"]["COOKIE"]
 
 def getSeed():
@@ -210,9 +191,29 @@ def getSeed():
         config["Main"]["SEED"] = s
         with open('config.ini', 'w') as config_file:
             config.write(config_file)
+        print(f"[{datetime.now().strftime(time_format)}] Сохранено!")
+        print(f"[{datetime.now().strftime(time_format)}] Настройка завершена!")
+    return config["Main"]["SEED"]
+
+def updateCookie():
+    print(f"[{datetime.now().strftime(time_format)}] Чтобы продолжить работу, впиши свой Fragment Cookie.")
+    print(f"[{datetime.now().strftime(time_format)}] Инструкция, как его получить, есть в теме на Lolz.")
+    print(f"[{datetime.now().strftime(time_format)}] Примечание: если у тебя нет верификации на Fragment, то просто нажми Enter.")
+    t = input(f"[{datetime.now().strftime(time_format)}] >>> ")
+    config["Main"]["COOKIE"] = t
+    with open('config.ini', 'w') as config_file:
+        config.write(config_file)
+    print(f"[{datetime.now().strftime(time_format)}] Сохранено!")
+
+def updateSeed():
+    print(f"[{datetime.now().strftime(time_format)}] Чтобы продолжить работу, введи Seed / Memo твоего TON-кошелька.")
+    print(f"[{datetime.now().strftime(time_format)}] Инструкция, как его получить, есть в теме на Lolz.")
+    s = input(f"[{datetime.now().strftime(time_format)}] >>> ")
+    config["Main"]["SEED"] = s
+    with open('config.ini', 'w') as config_file:
+        config.write(config_file)
     print(f"[{datetime.now().strftime(time_format)}] Сохранено!")
     print(f"[{datetime.now().strftime(time_format)}] Настройка завершена!")
-    return config["Main"]["SEED"]
 
 def main():
     logo = """)
@@ -260,8 +261,8 @@ def main():
             getBalance(SEED)
 
         elif c == 4:
-            COOKIE = getCookie()
-            SEED = getSeed()
+            updateCookie()
+            updateSeed()
 
         elif c == 5:
             print(f"[{datetime.now().strftime(time_format)}] Спасибо за использование!")
