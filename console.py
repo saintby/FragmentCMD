@@ -1,5 +1,4 @@
-import os, requests, configparser, json
-import socket
+import requests, configparser
 from colorama import Style, Fore
 from datetime import datetime
 
@@ -16,7 +15,7 @@ def save_config():
     with open('config.ini', 'w') as config_file:
         config.write(config_file)
 
-def buyStars(COOKIE, SEED):
+def buyStars(SEED):
     print(f"[{datetime.now().strftime(time_format)}] Впишите юзернейм, кому вы хотите купить звёзды.")
     print(f"[{datetime.now().strftime(time_format)}] Можно как t.me/..., так и @username или username.")
     username: str = input(f"[{datetime.now().strftime(time_format)}] >>> ")
@@ -53,7 +52,8 @@ def buyStars(COOKIE, SEED):
                     print(f"[{datetime.now().strftime(time_format)}] ✨ Звёзды: {amount} шт.")
                 else:
                     print(f"[{datetime.now().strftime(time_format)}] ⚠️ Покупка не удалась!")
-                    print(f"[{datetime.now().strftime(time_format)}] ❌ Причина: {result.get('message', 'Unknown error')}")
+                    print(
+                        f"[{datetime.now().strftime(time_format)}] ❌ Причина: {result.get('message', 'Unknown error')}")
 
             elif response.status_code == 400:
                 print("\n⚠️ Плохой запрос.")
@@ -72,9 +72,10 @@ def buyStars(COOKIE, SEED):
             print("\n🚨 Запрос не удался:", str(e))
 
     if f == 2:
-        buyStars(COOKIE, SEED)
+        buyStars(SEED)
 
-def buyPremium(COOKIE, SEED):
+
+def buyPremium(SEED):
     print(f"[{datetime.now().strftime(time_format)}] Впишите юзернейм, кому вы хотите подарить Premium.")
     print(f"[{datetime.now().strftime(time_format)}] Можно как t.me/..., так и @username или username.")
     username: str = input(f"[{datetime.now().strftime(time_format)}] >>> ")
@@ -82,7 +83,7 @@ def buyPremium(COOKIE, SEED):
     print(f"[{datetime.now().strftime(time_format)}] Пиши целое число без каких-либо символов: 3, 6, 12.")
     duration: int = int(input(f"[{datetime.now().strftime(time_format)}] >>> "))
     print(f"[{datetime.now().strftime(time_format)}] Теперь внимательно перепроверь данные ниже:")
-    print(f"[{datetime.now().strftime(time_format)}] 👤 Юзернейм: {username}"  )
+    print(f"[{datetime.now().strftime(time_format)}] 👤 Юзернейм: {username}")
     print(f"[{datetime.now().strftime(time_format)}] 🕙 Длительность: {duration} мес.")
     print(f"[{datetime.now().strftime(time_format)}] Всё верно?")
     print(f"[{datetime.now().strftime(time_format)}] [1] Да")
@@ -111,7 +112,8 @@ def buyPremium(COOKIE, SEED):
                     print(f"[{datetime.now().strftime(time_format)}] 🕙 Длительность: {duration} мес.")
                 else:
                     print(f"[{datetime.now().strftime(time_format)}] ⚠️ Покупка не удалась!")
-                    print(f"[{datetime.now().strftime(time_format)}] ❌ Причина: {result.get('message', 'Unknown error')}")
+                    print(
+                        f"[{datetime.now().strftime(time_format)}] ❌ Причина: {result.get('message', 'Unknown error')}")
 
             elif response.status_code == 400:
                 print("\n⚠️ Плохой запрос.")
@@ -128,8 +130,10 @@ def buyPremium(COOKIE, SEED):
 
         except requests.RequestException as e:
             print("\n🚨 Запрос не удался:", str(e))
+
     elif f == 2:
-        buyPremium(COOKIE, SEED)
+        buyPremium(SEED)
+
 
 def getBalance(SEED):
     url = "https://fragmentapi.nightstranger.space/getBalance"
@@ -167,25 +171,12 @@ def getBalance(SEED):
     except requests.RequestException as e:
         print("\n🚨 Запрос не удался:", str(e))
 
-def getCookie():
-    try:
-        config.get('Main', 'COOKIE')
-    except configparser.NoOptionError:
-        print(f"[{datetime.now().strftime(time_format)}] Чтобы продолжить работу, впиши свой Fragment Cookie.")
-        print(f"[{datetime.now().strftime(time_format)}] Инструкция, как его получить, есть в теме на Lolz.")
-        print(f"[{datetime.now().strftime(time_format)}] Примечание: если у тебя нет верификации на Fragment, то просто нажми Enter.")
-        t = input(f"[{datetime.now().strftime(time_format)}] >>> ")
-        config["Main"]["COOKIE"] = t
-        with open('config.ini', 'w') as config_file:
-            config.write(config_file)
-        print(f"[{datetime.now().strftime(time_format)}] Сохранено!")
-    return config["Main"]["COOKIE"]
-
 def getSeed():
     try:
         config.get('Main', 'SEED')
     except configparser.NoOptionError:
-        print(f"[{datetime.now().strftime(time_format)}] Чтобы продолжить работу, введи Seed / Memo твоего TON-кошелька.")
+        print(
+            f"[{datetime.now().strftime(time_format)}] Чтобы продолжить работу, введи Seed / Memo твоего TON-кошелька.")
         print(f"[{datetime.now().strftime(time_format)}] Инструкция, как его получить, есть в теме на Lolz.")
         s = input(f"[{datetime.now().strftime(time_format)}] >>> ")
         config["Main"]["SEED"] = s
@@ -194,16 +185,6 @@ def getSeed():
         print(f"[{datetime.now().strftime(time_format)}] Сохранено!")
         print(f"[{datetime.now().strftime(time_format)}] Настройка завершена!")
     return config["Main"]["SEED"]
-
-def updateCookie():
-    print(f"[{datetime.now().strftime(time_format)}] Чтобы продолжить работу, впиши свой Fragment Cookie.")
-    print(f"[{datetime.now().strftime(time_format)}] Инструкция, как его получить, есть в теме на Lolz.")
-    print(f"[{datetime.now().strftime(time_format)}] Примечание: если у тебя нет верификации на Fragment, то просто нажми Enter.")
-    t = input(f"[{datetime.now().strftime(time_format)}] >>> ")
-    config["Main"]["COOKIE"] = t
-    with open('config.ini', 'w') as config_file:
-        config.write(config_file)
-    print(f"[{datetime.now().strftime(time_format)}] Сохранено!")
 
 def updateSeed():
     print(f"[{datetime.now().strftime(time_format)}] Чтобы продолжить работу, введи Seed / Memo твоего TON-кошелька.")
@@ -214,10 +195,12 @@ def updateSeed():
         config.write(config_file)
     print(f"[{datetime.now().strftime(time_format)}] Сохранено!")
     print(f"[{datetime.now().strftime(time_format)}] Настройка завершена!")
+    return config["Main"]["SEED"]
+
 
 def main():
     logo = """)
-        
+
 ▄████████    ▄████████     ███     
 ███    ███   ███    ███ ▀█████████▄ 
 ███    █▀    ███    █▀     ▀███▀▀██ 
@@ -226,20 +209,19 @@ def main():
 ███          ███            ███     
 ███          ███            ███     
 ███          ███           ▄████▀   
-                                  
+
 """
     VERSION = "\nv1.0"
     msg = f"""
-    
+
 {Fore.LIGHTWHITE_EX}{Style.BRIGHT} * Telegram: {Fore.LIGHTRED_EX} t.me/maybewearedxxd
 {Fore.LIGHTWHITE_EX}{Style.BRIGHT} * VK: {Fore.LIGHTRED_EX} vk.com/christyoursaver
 {Fore.LIGHTWHITE_EX}{Style.BRIGHT} * GitHub: {Fore.LIGHTRED_EX} github.com/saintby
 {Fore.LIGHTWHITE_EX}{Style.BRIGHT} * Lolz: {Fore.LIGHTRED_EX} lolz.live/members/6469293/
 {Fore.LIGHTWHITE_EX}{Style.BRIGHT} * FunPay: {Fore.LIGHTRED_EX} funpay.com/users/2763155/
 """
-    print(logo+VERSION+msg)
+    print(logo + VERSION + msg)
     print(f"[{datetime.now().strftime(time_format)}] Привет!")
-    COOKIE = getCookie()
     SEED = getSeed()
     while True:
         print(f"[{datetime.now().strftime(time_format)}] Выбери следующее действие:")
@@ -252,17 +234,16 @@ def main():
         c: int = int(input(f"[{datetime.now().strftime(time_format)}] >>> "))
 
         if c == 1:
-            buyStars(COOKIE, SEED)
+            buyStars(SEED)
 
         elif c == 2:
-            buyPremium(COOKIE, SEED)
+            buyPremium(SEED)
 
         elif c == 3:
             getBalance(SEED)
 
         elif c == 4:
-            updateCookie()
-            updateSeed()
+            SEED = updateSeed()
 
         elif c == 5:
             print(f"[{datetime.now().strftime(time_format)}] Спасибо за использование!")
